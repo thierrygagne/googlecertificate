@@ -1,0 +1,1183 @@
+---
+title: "GOOGLE CERTIFICATE CAPSTONE PROJECT"
+subtitle: "TRACK 1 / CASE STUDY 1 - Bike-share analysis"
+author: "Thierry Gagné"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+<br>
+
+------------------------------------------------------------------------
+
+# INTRODUCTION
+
+<br>
+
+### 1. GOAL
+
+The [Google Data Analytics Professional
+Certificate](https://www.coursera.org/professional-certificates/google-data-analytics?utm_source=gg&utm_medium=sem&utm_campaign=15-GoogleCareerCert-HubPage-ROW&utm_content=B2C&campaignid=12525380573&adgroupid=123096382230&device=c&keyword=google%20ads%20certification%20course&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=505430311641&hide_mobile_promo&gclid=Cj0KCQiA-oqdBhDfARIsAO0TrGEBNjgbJf-fPfRDLgRR64oVqxHErOw17pTFvLlQfymtuBR7j4Yd7qMaAkeTEALw_wcB)
+requires completing a Capstone Project.
+
+I chose their Track 1 - Case Study 1 "How Does a Bike-Share Navigate
+Speedy Success?" to see: 1) what Google considers a legitimate scenario
+and 2) what other enrolees had done with this case study, and if I could
+add something new.
+
+[The full instructions for this Case Study are here (Coursera
+link)](https://d3c33hcgiwev3.cloudfront.net/aacF81H_TsWnBfNR_x7FIg_36299b28fa0c4a5aba836111daad12f1_DAC8-Case-Study-1.pdf?Expires=1671753600&Signature=SN1XImZyjAQE8SVADYjyPpK9RhC4ua6XUap0jEeQeqjXlUhylKT8iDPg7n-sGvIRqRYd9a1x1Wrvgc-f5rKdNDC~JkqAyCJK3fZTs9P4-csz9JidOTLwzeTc500kKNY1ZM-jP5iB2HJF4ok~igaVMpU7UKJnz1xKB7LJcH85UWc_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A)
+
+The Google Certificate proposes to de-structure a project into the
+following steps: Ask, Prepare, Process, Analyse, Share, and Act.
+
+This document presents in the **1. Executive Report** section the
+research question (Ask), a description of the data (Analyse, Share), and
+recommendations (Act). The "Prepare" step was done by seeking additional
+information from press releases and news articles, blog posts from data
+analysts, and the projects of other Google Certificate enrolees.
+
+This document then presents in the **2. Appendix** section the data
+cleaning steps, with notes on missing data and outliers (Process).
+
+<br>
+
+### 2. PERSONAL NOTE
+
+This capstone project was by far the most fun I had with the
+Certificate. I have worked with Stata for seven years now and its
+convenience has made it hard to move on to anything else, even if R is
+much more powerful in the long run.
+
+I am excited to continue learning SQL and start Python in the next year.
+I hope that I can return to this document in a few years and appreciate
+how much I have grown. In the meantime, please don't judge my code too
+harshly!
+
+**P.S.** It was hard fighting project creep. I initially wanted to match
+station coordinates with U.S. counties to explore the role of e.g., area
+poverty, but I quickly realised that this would require *days* of
+cleaning data and learning more about Chicago. In the end, I decided to
+focus on the variables highlighted in the Case Study instructions, and
+strengthen the recommendations with the other sources that have looked
+at the dataset.
+
+<br>
+
+------------------------------------------------------------------------
+
+# 1. EXECUTIVE REPORT
+
+<br>
+
+### 1.1 CASE STUDY
+
+<br>
+
+The Case Study instructions introduce the following problem:
+
+"You are a junior data analyst working in the marketing analyst team at
+Cyclistic, a bike-share company in Chicago. The director of marketing
+believes the company's future success depends on maximizing the number
+of annual memberships. **Therefore, your team wants to understand how
+casual riders and annual members use Cyclistic bikes differently.**"
+
+*The instructions propose to focus on the role of ride duration, day of
+the week, and variation across months, so let's stick with that!*
+
+<br>
+
+### 1.2. CONTEXT
+
+<br>
+
+The Case Study is based on the real-world example of the Divvy
+bike-share company in Chicago.
+
+<br>
+
+**History**
+[[link]](https://www.linkedin.com/pulse/divvy-bikes-review-chicago-bike-sharing-puts-brakes-ux-will-scott/)
+
+"*Divvy is the European-inspired brainchild of former Chicago Mayor
+Richard M. Daley, who served the city from 1989 to 2011. It launched in
+June of 2013 with 750 bikes at 75 stations. Divvy is provided as a
+service of the Chicago Department of Transportation (CDOT) and is
+operated by private partner Motivate (formerly Alta Bicycle Share).*"
+
+<br>
+
+**Early results (2014)**
+[[link]](https://www.chicago.gov/city/en/depts/mayor/press_room/press_releases/2014/mar/survey-of-divvy-members-brings-positive-reviews-of-chicagos-newe.html)
+
+"*A total of 97 percent of the responding members said they were
+"satisfied" or "very satisfied" with Divvy. In addition, when asked how
+likely on a scale of 1 to 10 they are to recommend Divvy to a friend,
+members responded on average with 9.1. A total of 80 percent of members
+are "somewhat more likely" or "much more likely" to patronize a business
+that is near a Divvy bike station.*
+
+*Compared to what they were spending before they joined, members on
+average save \$760 a year on travel, including auto expenses, taxis and
+other forms of public transit.*
+
+*On average, members said they take nearly three trips each month that
+they would not have made if Divvy was not available. Reasons these trips
+wouldn't have been taken include being too far to walk (44 percent),
+bicycle is faster or easier (36 percent), no bus/train or bus/train is
+inconvenient to that destination (32 percent), parking is limited or
+expensive at that destination (27 percent), or Divvy is cheaper than
+alternatives (23 percent).*
+
+*Top things that motivated members to join Divvy:* *1. Get around more
+easily and faster: 85%;* *2. Station near home or work: 67%;* *3. Like
+biking: 66%;* *4. Save money on transportation: 51%;* *5. Exercise and
+fitness: 51%.*
+
+*Members "sometimes" or "often" use Divvy for the following purposes:*
+*1. Go to/from work: 84%;* *2. Social/entertainment: 82%;* *3.
+Shopping/errands: 78%;* *4. Go to/from transit: 76%;* *5.
+Exercise/recreation: 57%.*"
+
+<br>
+
+**Current challenges (2022)**
+[[link]](https://chi.streetsblog.org/2022/09/30/whats-going-on-with-divvy-availability-lets-look-at-the-data/)
+
+"*Anecdotally, bike availability has gotten worse, and an analysis of
+August and September shows things aren't so great. And this is against a
+backdrop of price hikes and a shift away from classic bikes to more
+expensive e-bikes.*
+
+*Still, there were 914,000 trips in August, a new record, so perhaps
+some of these issues are just growing pains, as the Divvy team learns to
+adapt to a more heavily-used system. Lyft also says it is on track to
+complete the deployment of 10,500 new e-bikes required by the latest
+contract renewal. While not everyone wants to pay extra for an e-bike, a
+higher number of bikes in the system overall should help increase the
+availability of classic bikes.*
+
+*One possible way forward on the staffing front: Lyft is working with
+the nonprofit bike shop Working Bikes on a new mechanic training
+program, which saw its first graduates in April, to try to alleviate the
+shortage of bike mechanics.*"
+
+<br>
+
+**Schematic map of the ride-share service area**
+
+![](https://images.contentful.com/p6ae3zqfb1e3/4U39T1NA0QfNcD5B2y0BFR/25db2480459543217fe734399cb48d25/CHI-E-Bike-Zone-Map.png){width="50%,"
+height="50%"}
+
+<br>
+
+[Interactive map of Divvy stations](https://account.divvybikes.com/map)
+
+[More information on the Divvy bike sharing
+platform](https://ride.divvybikes.com/how-it-works)
+
+[More information on the Divvy pricing
+model](https://ride.divvybikes.com/pricing)
+
+<br>
+
+### 1.3 DATASET
+
+<br>
+
+The Case Study instructions ask to use the last 12 months of data on
+this website:
+
+[Link to Divvy
+database](https://divvy-tripdata.s3.amazonaws.com/index.html)
+
+[More information on the Divvy
+data](https://ride.divvybikes.com/system-data)
+
+Importantly, the rows represent rides, not riders.
+
+[The City of Chicago shares the same data with additional information on
+the age and sex of riders, but this will not be explored
+here](https://data.cityofchicago.org/Transportation/Divvy-Trips/fg6s-gzvg).
+
+**I will use the 12 files between Dec 2021 and November 2022 (since I started the project on Dec 21st 2022).**
+
+<br>
+
+### 1.4 RESULTS
+
+<br>
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+
+# CODE CHUNK 1
+
+################################################
+#### 1. INSTALL AND LOAD R PACKAGES
+################################################
+
+# CONSIDER INSTALLING THESE PACKAGES
+
+# install.packages("tidyverse")
+# install.packages("lubridate")
+# install.packages("mapview")
+# install.packages("sf")
+# install.packages("magick")
+
+# FOR GENERAL CLEANING
+
+library("tidyverse")
+library("lubridate")
+
+# FOR THE MAPVIEW
+
+library(sf)
+sf::sf_use_s2(FALSE)
+library(mapview)
+library(magick)
+
+################################################
+#### 2. OPEN DATASET
+################################################
+
+rm(list = ls())
+
+# THIS OPENS ALL 12 MONTHS SEPARATELY
+
+setwd("/Users/thierrygagne/Desktop/Learning/Learning R/Google Certificate/Course 8 - Capstone/data")
+newdata_1_df <- cbind("month_id" = 1, read_csv("202112-divvy-tripdata.csv"))
+newdata_2_df <- cbind("month_id" = 2, read_csv("202201-divvy-tripdata.csv"))
+newdata_3_df <- cbind("month_id" = 3, read_csv("202202-divvy-tripdata.csv"))
+newdata_4_df <- cbind("month_id" = 4, read_csv("202203-divvy-tripdata.csv"))
+newdata_5_df <- cbind("month_id" = 5, read_csv("202204-divvy-tripdata.csv"))
+newdata_6_df <- cbind("month_id" = 6, read_csv("202205-divvy-tripdata.csv"))
+newdata_7_df <- cbind("month_id" = 7, read_csv("202206-divvy-tripdata.csv"))
+newdata_8_df <- cbind("month_id" = 8, read_csv("202207-divvy-tripdata.csv"))
+newdata_9_df <- cbind("month_id" = 9, read_csv("202208-divvy-tripdata.csv"))
+newdata_10_df <- cbind("month_id" = 10, read_csv("202209-divvy-publictripdata.csv"))
+newdata_11_df <- cbind("month_id" = 11, read_csv("202210-divvy-tripdata.csv"))
+newdata_12_df <- cbind("month_id" = 12, read_csv("202211-divvy-tripdata.csv"))
+
+# THIS SECTION KEEPS ONLY 2.5 % OF ROWS FOR EACH MONTH TO SAVE TIME ON PRELIMINARY ANALYSES
+
+# samplesize1 <- newdata_1_df %>% summarise(n()/50)
+# newdata_1_df <- sample_n(newdata_1_df, samplesize1[[1]])
+# samplesize2 <- newdata_2_df %>% summarise(n()/50)
+# newdata_2_df <- sample_n(newdata_2_df, samplesize2[[1]])
+# samplesize3 <- newdata_3_df %>% summarise(n()/50)
+# newdata_3_df <- sample_n(newdata_3_df, samplesize3[[1]])
+# samplesize4 <- newdata_4_df %>% summarise(n()/50)
+# newdata_4_df <- sample_n(newdata_4_df, samplesize4[[1]])
+# samplesize5 <- newdata_5_df %>% summarise(n()/50)
+# newdata_5_df <- sample_n(newdata_5_df, samplesize5[[1]])
+# samplesize6 <- newdata_6_df %>% summarise(n()/50)
+# newdata_6_df <- sample_n(newdata_6_df, samplesize6[[1]])
+# samplesize7 <- newdata_7_df %>% summarise(n()/50)
+# newdata_7_df <- sample_n(newdata_7_df, samplesize7[[1]])
+# samplesize8 <- newdata_8_df %>% summarise(n()/50)
+# newdata_8_df <- sample_n(newdata_8_df, samplesize8[[1]])
+# samplesize9 <- newdata_9_df %>% summarise(n()/50)
+# newdata_9_df <- sample_n(newdata_9_df, samplesize9[[1]])
+# samplesize10 <- newdata_10_df %>% summarise(n()/50)
+# newdata_10_df <- sample_n(newdata_10_df, samplesize10[[1]])
+# samplesize11 <- newdata_11_df %>% summarise(n()/50)
+# newdata_11_df <- sample_n(newdata_11_df, samplesize11[[1]])
+# samplesize12 <- newdata_12_df %>% summarise(n()/50)
+# newdata_12_df <- sample_n(newdata_12_df, samplesize12[[1]])
+
+# THIS BINDS ALL THE 12 FILES TOGETHER
+
+newdata_df <- rbind(newdata_1_df,
+                      newdata_2_df,
+                      newdata_3_df,
+                      newdata_4_df,
+                      newdata_5_df,
+                      newdata_6_df,
+                      newdata_7_df,
+                      newdata_8_df,
+                      newdata_9_df,
+                      newdata_10_df,
+                      newdata_11_df,
+                      newdata_12_df)
+
+original_df <- newdata_df
+
+# THIS REMOVES THE 12 SEPARATE FILES
+
+rm(list = c("newdata_1_df",
+                    "newdata_2_df",
+                    "newdata_3_df",
+                    "newdata_4_df",
+                    "newdata_5_df",
+                    "newdata_6_df",
+                    "newdata_7_df",
+                    "newdata_8_df",
+                    "newdata_9_df",
+                    "newdata_10_df",
+                    "newdata_11_df",
+                    "newdata_12_df"))
+
+rm(list = c("samplesize1",
+                    "samplesize2",
+                    "samplesize3",
+                    "samplesize4",
+                    "samplesize5",
+                    "samplesize6",
+                    "samplesize7",
+                    "samplesize8",
+                    "samplesize9",
+                    "samplesize10",
+                    "samplesize11",
+                    "samplesize12"))
+
+# How to use rbind to merge dataframes:
+# https://www.statmethods.net/management/merging.html
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 2
+
+################################################
+#### 1. Creating the "length of each ride" variable
+################################################
+
+newdata_df$ride_length <- as.numeric(newdata_df$ended_at - newdata_df$started_at)
+
+################################################
+#### 2. Creating the "day of the week" variable
+################################################
+
+newdata_df$day_of_week <- wday(newdata_df$started_at)
+newdata_df$day_of_week <- factor(newdata_df$day_of_week,
+  levels = c(1, 2, 3, 4, 5, 6, 7),
+  labels = c("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"))
+    
+################################################
+#### Creating the MONTH variable
+################################################
+
+newdata_df$month <- factor(as.character(newdata_df$month_id),
+                           levels = (c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)),
+                           labels = (c("Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
+                           )
+
+################################################
+#### Creating the OUTLIER variable
+################################################
+
+newoutlier1 <- subset(newdata_df, ride_id == "3327172413547F64")
+newoutlier2 <- subset(newdata_df, ride_length >= 1 & newdata_df$ride_length <= 59)
+newoutlier3 <- subset(newdata_df, ride_length <= 0 | newdata_df$ride_length > 10800)
+newoutlier4 <- subset(newdata_df, ((newdata_df$rideable_type == "classic_bike" | newdata_df$rideable_type == "docked_bike") & is.na(newdata_df$end_station_name) == TRUE))
+
+newdata_df$outlier <- 0
+newdata_df$outlier[newdata_df$ride_length <= 10800] <- "Valid"
+newdata_df$outlier[newdata_df$ride_length <= 59] <- "Outlier"
+newdata_df$outlier[newdata_df$ride_length > 10800] <- "Outlier"
+newdata_df$outlier[(newdata_df$rideable_type == "classic_bike" | newdata_df$rideable_type == "docked_bike") & is.na(newdata_df$end_station_name) == TRUE] <- "Outlier"
+newdata_df$outlier[newdata_df$ride_id == "3327172413547F64"] <- "Outlier"
+
+newdata_df$outlier <- as.factor(newdata_df$outlier)
+#prop.table(table(newdata_df$outlier))
+
+newdata_df <- subset(newdata_df, newdata_df$outlier == "Valid")
+
+################################################
+#### Creating the DAY and DAILYRIDE variables
+################################################
+
+# RECONVERT STARTED AT INTO DATES
+newdata_df$day <- as.Date(newdata_df$started_at)
+
+# COMPUTE TOTAL RIDES PER DAY
+newdatacount <- newdata_df %>%
+  group_by(day) %>% 
+  count()
+
+newdata_df <- merge(newdata_df, newdatacount, by=c("day"))
+newdata_df$dailyridestotal <- newdata_df$n
+newdata_df = subset(newdata_df, select = -c(n))
+
+# COMPUTE TOTAL RIDES PER DAY, CASUALS ONLY
+newdatacount <- newdata_df %>%
+  filter(member_casual == "casual") %>% 
+  group_by(day) %>% 
+  count()
+
+newdata_df <- merge(newdata_df, newdatacount, by=c("day"))
+newdata_df$dailyridescasual <- newdata_df$n
+newdata_df = subset(newdata_df, select = -c(n))
+
+# COMPUTE TOTAL RIDES PER DAY, MEMBERS ONLY
+newdatacount <- newdata_df %>%
+  filter(member_casual == "member") %>% 
+  group_by(day) %>% 
+  count()
+
+newdata_df <- merge(newdata_df, newdatacount, by=c("day"))
+newdata_df$dailyridesmember <- newdata_df$n
+newdata_df = subset(newdata_df, select = -c(n))
+
+rm(newdatacount)
+
+#########################################
+# CREATE START AND END STATIONS VARIABLES
+#########################################
+
+# MOST POPULAR START STATIONS
+newdatacount <- newdata_df %>%
+  group_by(start_station_name) %>% 
+      count()
+
+newdata_df <- merge(newdata_df, newdatacount, by=c("start_station_name"))
+newdata_df$startstationtotal <- newdata_df$n
+newdata_df$startstationtotal[is.na(newdata_df$start_station_name)==TRUE] <- NA
+newdata_df = subset(newdata_df, select = -c(n))
+
+# START STATION RANK
+start_station_rank <- 
+  newdata_df %>% 
+    mutate(rank = dense_rank(desc(startstationtotal)))
+
+start_station_rank = subset(start_station_rank, select = c("rank"))
+newdata_df <- cbind(newdata_df, start_station_rank)
+newdata_df$start_rank <- newdata_df$rank
+newdata_df <- subset(newdata_df, select = -c(rank))
+
+# CALCULATE COORDINATES FOR SUBSET OF HOT STATIONS
+
+newdata_df$hot_start_lat <- newdata_df$start_lat
+newdata_df$hot_start_lat[newdata_df$start_rank > 50] <- NA
+
+newdata_df$hot_start_lng <- newdata_df$start_lng
+newdata_df$hot_start_lng[newdata_df$start_rank > 50] <- NA
+
+# MOST POPULAR END STATIONS
+newdatacount <- newdata_df %>%
+  group_by(end_station_name) %>% 
+  count()
+
+newdata_df <- merge(newdata_df, newdatacount, by=c("end_station_name"))
+newdata_df$endstationtotal <- newdata_df$n
+newdata_df$endstationtotal[is.na(newdata_df$end_station_name)==TRUE] <- NA
+newdata_df = subset(newdata_df, select = -c(n))
+
+# END STATION RANK
+end_station_rank <- 
+  newdata_df %>% 
+    mutate(rank = dense_rank(desc(endstationtotal)))
+
+end_station_rank = subset(end_station_rank, select = c("rank"))
+newdata_df <- cbind(newdata_df, end_station_rank)
+newdata_df$end_rank <- newdata_df$rank
+newdata_df <- subset(newdata_df, select = -c(rank))
+
+# CALCULATE COORDINATES FOR SUBSET OF END STATIONS
+
+newdata_df$hot_end_lat <- newdata_df$end_lat
+newdata_df$hot_end_lat[newdata_df$end_rank > 50] <- NA
+
+newdata_df$hot_end_lng <- newdata_df$end_lng
+newdata_df$hot_end_lng[newdata_df$end_rank > 50] <- NA
+
+#########################################
+# CREATE START AND END STATIONS VARIABLES FOR MAPVIEW
+#########################################
+
+# SHOW MAPS
+
+# See: https://masonfidino.com/investigate_spatial_data/
+
+start_stations_df <- newdata_df %>% group_by(start_station_id) %>% filter(row_number() == 1)
+start_stations_df <- cbind(newdata = "start", start_stations_df)
+start_stations_df <- start_stations_df %>% arrange(start_station_name)
+
+end_stations_df <- newdata_df %>% group_by(end_station_id) %>% filter(row_number() == 1)
+end_stations_df <- cbind(newdata = "end", end_stations_df)
+end_stations_df <- end_stations_df %>% arrange(end_station_name)
+
+all_stations_df <- rbind(start_stations_df, end_stations_df)
+
+all_stations_df$station_name <- NA
+all_stations_df$lat <- NA
+all_stations_df$lng <- NA
+
+all_stations_df$station_name[all_stations_df$newdata == "start"] <- all_stations_df$start_station_name
+all_stations_df$station_name[all_stations_df$newdata == "end"] <- all_stations_df$end_station_name
+
+all_stations_df$lat[all_stations_df$newdata == "start"] <- all_stations_df$start_lat
+all_stations_df$lat[all_stations_df$newdata == "end"] <- all_stations_df$end_lat
+all_stations_df$lng[all_stations_df$newdata == "start"] <- all_stations_df$start_lng
+all_stations_df$lng[all_stations_df$newdata == "end"] <- all_stations_df$end_lng
+
+all_stations_df <- all_stations_df %>% distinct(station_name, .keep_all = TRUE)
+
+all_stations <- data.frame(
+  longitude = all_stations_df$lng,
+  latitude = all_stations_df$lat,
+  name = all_stations_df$station_name
+)
+
+all_stations <- sf::st_as_sf(
+  all_stations, 
+  coords = c("longitude","latitude"),
+  crs = 4326 # lat/long coordinate reference system
+)
+   
+# HOT START STATIONS
+
+hot_start_stations <- data.frame(
+  longitude = start_stations_df$hot_start_lng,
+  latitude = start_stations_df$hot_start_lat,
+  rank = start_stations_df$start_rank,
+  name = start_stations_df$start_station_name
+)
+
+hot_start_stations <- subset(hot_start_stations, rank <= 50, select = c("longitude","latitude", "rank", "name"))
+
+hot_start_stations <- sf::st_as_sf(
+  hot_start_stations, 
+  coords = c("longitude","latitude"),
+  crs = 4326 # lat/long coordinate reference system
+)
+
+# END START STATIONS
+
+hot_end_stations <- data.frame(
+  longitude = end_stations_df$hot_end_lng,
+  latitude = end_stations_df$hot_end_lat,
+  rank = end_stations_df$end_rank,
+  name = end_stations_df$end_station_name
+)
+
+hot_end_stations <- subset(hot_end_stations, rank <= 50, select = c("longitude","latitude", "rank", "name"))
+
+hot_end_stations <- sf::st_as_sf(
+  hot_end_stations, 
+  coords = c("longitude","latitude"),
+  crs = 4326 # lat/long coordinate reference system
+)
+
+```
+
+##### 1.4.1. INTRODUCTION
+
+<br>
+
+The dataset has information on: the time and dock stations in which the
+ride started and ended, whether rides were classic or electric bikes,
+and whether these have been done by casual riders or annual members.
+
+A total of 5,733,451 rides were available for analysis between December
+2021 and November 2022.
+
+During data cleaning, a small number of rides had: 1) started at a dock
+station but not ended at a dock station, 2) an invalid ride duration
+(e.g., negative, entire days), or 3) invalid geographical coordinates
+(i.e., not in Chicago). We also need to remove rides that were less than
+a minute to conform with [Divvy's data cleaning
+policy](https://ride.divvybikes.com/system-data).
+
+Analyses were therefore done in 5,592,668 valid rides (i.e., 97.5% of
+the sample).
+
+```{r echo=FALSE}
+
+# CODE CHUNK 3
+
+# NUMBERS
+
+# prop.table(table(newdata_df$member_casual))
+# prop.table(table(newdata_df$rideable_type))
+# prop.table(table(newdata_df$member_casual, newdata_df$rideable_type))
+
+```
+
+Overall, 40.8% of rides were done by casual riders and 59.2% by annual
+members. Comparing ride type (i.e., classic bikes versus electric bike),
+54.0% of rides were done on e-bikes among casual riders compared to
+48.6% among annual members.
+
+<br>
+
+##### 1.4.2 GEOGRAPHICAL VARIATION
+
+<br>
+
+Figure 1 presents the geographical distribution of 1,306 stations,
+highlighting the 50 most common start and end dock stations:
+
+<br>
+
+**FIGURE 1 - INTERACTIVE MAP OF DOCKING STATIONS**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 4
+
+mapview::mapview(
+  list(hot_start_stations, hot_end_stations, all_stations),
+  legend = FALSE,
+  col.regions = list("blue", "red", "blue"), 
+  alpha.regions = list(0.45, 0.55, 0.0),
+  label = list("name", "name", "name"),
+  cex = list(5, 5, 2)
+  )
+
+```
+
+*Top start stations are in pale blue, top end stations are in pale red,
+and stations that are both appear in darker red.*
+
+<br>
+
+Table 1 lists the most common start and end dock stations:
+
+<br>
+
+**TABLE 1 - MOST COMMON DOCKING STATIONS**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 5
+
+table11 <- newdata_df %>% group_by(start_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table12 <- newdata_df %>% filter(member_casual == "casual") %>% group_by(start_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table13 <- newdata_df %>% filter(member_casual == "member") %>% group_by(start_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table1 <- merge(table11, table12, by = c("start_station_name"), all = TRUE)
+table1 <- merge(table1, table13, by = c("start_station_name"), all = TRUE)
+table1 <- table1 %>% arrange(-n.x)
+names(table1)[2] <- "start_total"
+names(table1)[3] <- "start_casual"
+names(table1)[4] <- "start_member"
+
+table21 <- newdata_df %>% group_by(end_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table22 <- newdata_df %>% filter(member_casual == "casual") %>% group_by(end_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table23 <- newdata_df %>% filter(member_casual == "member") %>% group_by(end_station_name) %>% drop_na() %>% count() %>% arrange(-n)
+table2 <- merge(table21, table22, by = c("end_station_name"), all = TRUE)
+table2 <- merge(table2, table23, by = c("end_station_name"), all = TRUE)
+table2 <- table2 %>% arrange(-n.x)
+names(table2)[2] <- "end_total"
+names(table2)[3] <- "end_casual"
+names(table2)[4] <- "end_member" 
+
+table <- cbind(table1[1:15,], c(" "), c(" | "), table2[1:15,])
+table$start_casual_p <- round(table$start_casual / table$start_total * 100, 1)
+table$end_casual_p <- round(table$end_casual / table$end_total * 100, 1)
+
+rm(list = c("table1", 
+            "table11",
+            "table12",
+            "table13",
+            "table2", "table21", "table22", "table23"))
+   
+# TO SOLVE
+table <- cbind(table[,1:2], table[, 11], c(" /// "), table[,7:8], table[,12])
+
+names(table)[1] <- "Start station"
+names(table)[2] <- "Total"
+names(table)[3] <- "% Casual"
+names(table)[4] <- " "
+names(table)[5] <- "End station "
+names(table)[6] <- "Total"
+names(table)[7] <- "% Casual"
+
+knitr::kable(table, "simple")
+
+```
+
+<br>
+
+Rides are done more often in the Chicago downtown area, and from and to
+dock stations near major landmarks and public transit hubs.
+
+The "% casual" support that the purpose of rides differs across
+stations. For instance, rides starting at the "Millenium Park" station
+included more casual riders leaving the park whereas rides starting at
+the "Clark St & Elm St" station include more annual members, e.g.,
+moving to and from work.
+
+<br>
+
+##### 1.4.3 SEASONAL VARIATION
+
+<br>
+
+Figure 2 and 3 presents the seasonal variation in rides among casual
+riders and annual members by month and day.
+
+<br>
+
+**FIGURE 2 - Monthly rides, by membership status**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 6
+
+# MONTHLY RIDES OVER THE YEAR
+
+ggplot(data = newdata_df) +
+  geom_bar(mapping = aes(x = month, 
+                         fill = member_casual)) + 
+labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+  xlab("Time (in months)") + ylab("Monthly rides")
+
+```
+
+**FIGURE 3 - Daily rides, by membership status**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 7
+
+# DAILY RIDES OVER THE YEAR
+
+ggplot(data = newdata_df) +
+  geom_bar(mapping = aes(x = day, fill=member_casual)) + 
+  geom_smooth(mapping = aes(x = day, y = dailyridescasual), color="red") + 
+  geom_smooth(mapping = aes(x = day, y = dailyridesmember), color="aquamarine4") + 
+  labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+  xlab("Time (in days)") + ylab("Daily rides")
+
+
+```
+
+<br>
+
+Rides were more commonly done by annual members throughout the year,
+except in June around the start of the summer where casual riders and
+annual members were using the bike-share system to a similar extent.
+
+<br>
+
+**FIGURE 4 - Rides over days of the week, by month and membership
+status**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 8
+
+ggplot(data = newdata_df) +
+  geom_bar(mapping = aes(x = day_of_week, fill=member_casual)) +
+  facet_wrap(~month) + 
+  labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+  xlab("Day of the week, by month") + ylab("Daily rides")
+
+```
+
+<br>
+
+Figure 4 nicely shows that rides have been more common among casual
+riders on Saturday and Sunday, particularly during the months of July
+and October, whereas rides have been more common among annual members
+during the weekdays.
+
+<br>
+
+##### 1.4.4 RIDE DURATION
+
+<br>
+
+Figures 5 and 6 presents the distribution of ride duration over months
+and days of the week. Since ride duration is not normally distributed
+(i.e., some rides have had a much longer duration compared to the
+average), Figure 5 shows both the mean (in light gray) and median (in
+dark gray).
+
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# CODE CHUNK 9
+
+# MAKING THE PRELIMINARY STEP OF CREATING ALL THE VARIABLES FOR THE FIGURES
+
+table_mean <- 
+  newdata_df %>% 
+  group_by(month, member_casual) %>% 
+    summarise(mean = mean(ride_length))
+
+table_median <- 
+  newdata_df %>% 
+  group_by(month, member_casual) %>% 
+    summarise(median = median(ride_length))
+
+table_mean_day <- 
+  newdata_df %>% 
+  group_by(day, member_casual) %>% 
+    summarise(mean = mean(ride_length))
+
+table_median_day <- 
+  newdata_df %>% 
+  group_by(day, member_casual) %>% 
+    summarise(median = median(ride_length))
+
+table_mean_dayofweek <- 
+  newdata_df %>% 
+    group_by(day_of_week, month, member_casual) %>% 
+      summarise(mean = mean(ride_length))
+
+# newdata_df %>% 
+#   group_by(member_casual) %>% 
+#     summarise(mean = mean(ride_length), 
+#               median = median(ride_length))
+
+```
+
+**FIGURE 5 - Mean and median ride duration by month, by membership**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot() + 
+  geom_bar(data = table_mean, mapping = aes(x=month, y=mean), stat="identity", width = 0.7, fill="grey") +
+  geom_bar(data = table_median, mapping = aes(x=month, y=median), stat="identity") +
+  geom_text(data = table_mean, aes(x=month, y=mean, label=round(mean)), vjust=1.6, color="black", size=3) + 
+  geom_text(data = table_median, aes(x=month, y=median, label=round(median)), vjust=1.6, color="white", size=3) +
+  facet_wrap(~member_casual) +
+  labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+  xlab("Time (in months)") + ylab("Ride duration (in seconds)")
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# ggplot() + 
+#   geom_bar(data = table_mean_day, mapping = aes(x=day, y=mean), stat="identity", fill="gray") +
+#   geom_smooth(data = table_mean_day, mapping = aes(x=day, y=mean), se = FALSE, color="darkgray") +
+#   geom_bar(data = table_median_day, mapping = aes(x=day, y=median), stat="identity") +
+#   geom_smooth(data = table_median_day, mapping = aes(x=day, y=median), se = FALSE, color="darkgray") +
+#   facet_wrap(~member_casual) +
+#   labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+#   xlab("Time (in days)") + ylab("Ride duration (in seconds)")
+  
+```
+
+**FIGURE 6 - Mean ride duration over days of the week, by month and
+membership**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(data = table_mean_dayofweek) +
+  geom_bar(mapping = aes(x = day_of_week, y=mean, fill=member_casual), stat="identity", position=position_dodge()) +
+  facet_wrap(~month) + 
+  labs(caption = "Divvy dataset, Dec 2021 to Nov 2022", fill = "") +
+  xlab("Day of the week, by month") + ylab("Ride duration (in seconds)")
+
+```
+
+<br>
+
+Among casual riders, the average ride time was 20.5 minutes and 50% of
+these rides lasted at least 13 minutes. This average duration varied
+over months and days of the week, with casual riders being more likely
+to have longer rides in the summer season, and on Saturday and Sunday.
+
+Among annual members, the average ride time was 12.3 minutes and 50% of
+these rides lasted at least 9 minutes. The average duration over months
+and the days of the week among annual members varied in a similar way
+across seasons, but to a much lesser degree compared to casual riders.
+
+The difference in duration between casual riders and annual members and
+between week and weekend days was relatively small in the winter months
+(i.e., November to January), and relatively large in the main season
+(i.e., March to October). This supports the idea that the purpose of
+rides likely varied across days of the week and seasons, especially
+among casual riders.
+
+<br>
+
+### 1.5 RECOMMENDATIONS
+
+<br>
+
+**These recommendations come from the combined work of data analysts
+outside the Google Certificate, enrolees in the Google Certificate, and
+myself. The articles used to support this list are referenced in the
+next section.**
+
+-   **Develop a relational database system allowing to link riders with
+    rides**. This is critical. Even without their demographics, just
+    having the id of the rider would blow open the possibilities for the
+    prediction of membership uptake among casual riders.
+
+-   **Ensure bike availability across docking stations** and monitor
+    public sentiment toward the system. Given that people often ride
+    with others, this means ensuring at least two working bikes per
+    station.
+    [[link]](https://chi.streetsblog.org/2022/09/30/whats-going-on-with-divvy-availability-lets-look-at-the-data/)
+
+-   Consider **providing feedback to casual riders that have used the
+    system for 1+ year** (e.g., "You have started with us over one year
+    ago now! Did you know that riders who subscribed saved up to X\$
+    over the past year? Consider the annual membership!").
+
+-   Consider **referral incentives** for annual memberships.
+    [[link]](https://medium.com/@grbaker7/what-does-the-bike-sharing-business-look-like-in-chicago-bb0722faf864)
+
+-   Consider **optimizing the pricing model** (mix of and price for
+    subscriptions vs one-time rides) to encourage annual membership.
+    [[link]](https://medium.com/@grbaker7/what-does-the-bike-sharing-business-look-like-in-chicago-bb0722faf864)
+
+-   Given the age distribution of the bike-share system usage,
+    **prioritise Gen X'ers, Millennials, and Gen Z'ers who are most
+    likely to use it to go to work (and back)**, and therefore more
+    likely to become annual members.
+    [[link]](https://www.heavy.ai/blog/oh-the-places-youll-go-analyzing-chicago-divvy-bike-share-data)
+
+-   Given that many also combine the bike-share system and the public
+    transport system to go to work (and back), **prioritise docking
+    stations close to major public transit stops**.
+    [[link]](https://www.heavy.ai/blog/oh-the-places-youll-go-analyzing-chicago-divvy-bike-share-data)
+
+-   Given the large fluctuation in rides across months, **prioritise
+    busier months for casual riders**, i.e., May to October.
+
+-   Alternatively, **prioritise months with large month-on-month
+    increases**, i.e., May to October, which likely highlights new
+    users.
+
+-   Given that most rides by casual riders are done during the weekend,
+    **tailor an advertisement campaign to casual riders that use the
+    system on Saturday and Sunday** to consider the annual membership.
+
+-   Given the pricing model, **tailor an advertisement campaign to
+    casual riders who have done rides between 30 and 45 minutes** to
+    consider the annual membership. This duration is over the 30 minutes
+    limit of the "Single Ride" payment option but under the 45 minutes
+    limit of the "Annual Member" option.
+
+-   Given that riders may be tourists, **prioritise casual riders who
+    actually live in Chicago**.
+    [[link]](https://rpubs.com/aronojeghuo/Google-Cyclistic)
+
+-   Given that casual rides plummet during the off-season, **consider an
+    alternative "seasonal" membership model** for casual riders who only
+    use the bike-share system during the summer period.
+    [[link]](https://medium.com/geekculture/google-data-analytics-capstone-project-cyclistic-bike-share-analysis-6c42340b3f10)
+
+<br>
+
+### 1.6 REFERENCES
+
+<br>
+
+##### 1.6.1 COURSERA ENROLEES
+
+<br>
+
+Blog posts from Coursera enrolees:
+
+[**Analysis by Lion
+Shi**](https://www.kaggle.com/code/lionshi/divvy-bikes-dataset-analysis/)
+
+[**Analysis by Akhelaaditya**](https://rpubs.com/Akhelaaditya/798955)
+
+[**Analysis by Hock
+Chong**](https://medium.com/geekculture/google-data-analytics-capstone-project-cyclistic-bike-share-analysis-6c42340b3f10)
+
+[**Analysis by Rodney Boyd**](https://rpubs.com/rodneycboyd/917243)
+
+[**Analysis by Ajoke
+Onojeghuo**](https://rpubs.com/aronojeghuo/Google-Cyclistic)
+
+<br>
+
+##### 1.6.2 OTHER SOURCES
+
+<br>
+
+Blog posts from other data analysts that examined the bike-share system.
+
+[**"What's going on with Divvy availability? Let's look at the data." -
+Steven Lucy, August
+2022**](https://chi.streetsblog.org/2022/09/30/whats-going-on-with-divvy-availability-lets-look-at-the-data/)
+
+[**"What does the Bike Sharing Business look like in Chicago?" -
+Gabriela Baker,
+2020**](https://medium.com/@grbaker7/what-does-the-bike-sharing-business-look-like-in-chicago-bb0722faf864)
+
+[**"Oh, the Places You'll Go! Analyzing Chicago Divvy Bike Share Data" -
+Samaksh (Avi) Goyal,
+2019**](https://www.heavy.ai/blog/oh-the-places-youll-go-analyzing-chicago-divvy-bike-share-data)
+
+<br>
+
+I also found blog posts that examined the user experience with the
+docking stations and the app, but did not take them into account since
+the focus of the project was on the Divvy public data.
+
+[**"Divvy Bikes Review : Chicago Bike Sharing Puts Brakes on UX" - Will
+Scott,
+2016**](https://www.linkedin.com/pulse/divvy-bikes-review-chicago-bike-sharing-puts-brakes-ux-will-scott/)
+
+[**"UX Design Case Study: Divvy Bikes" - AKFantham,
+2016**](https://www.linkedin.com/pulse/divvy-bikes-review-chicago-bike-sharing-puts-brakes-ux-will-scott/)
+
+<br> <br> <br>
+
+------------------------------------------------------------------------
+
+# 2. APPENDIX
+
+<br>
+
+**With a combined sample of over 5 million observations, I skipped Excel
+and went straight to R. I also skipped doing actual statistical tests
+given the enormous size of the sample.**
+
+<br>
+
+##### 1. VARIABLE LIST
+
+A first look at the dataset:
+
+```{r, echo=FALSE}
+
+glimpse(original_df[, 2:14])
+
+```
+
+We have 13 variables:
+
+-   *ride_id*, an id variable for each observation
+-   *rideable_type*, telling us whether the ride was done with a
+    classic, docked, or electric bike
+-   *started_at*, the time at which the ride started
+-   *ended_at*, the time at which the ride ended
+-   *start_station_name*, the name of the station where the ride started
+-   *start_station_id*, the id of the station where the ride started
+-   *end_station_name*, the name of the station where the ride ended
+-   *end_station_id*, the id of the station where the ride ended
+-   *start_lat*, the latitude of the station where the ride started
+-   *start_lng*, the longitude of the station where the ride started
+-   *end_lat*, the latitude of the station where the ride ended
+-   *end_lng*, the longitude of the station where the ride ended
+-   *member_casual*, **our key variable**, whether someone is a member
+    or a casual rider.
+
+<br>
+
+##### 2. MISSING DATA
+
+```{r, echo=FALSE}
+
+newlist <- c("ride_id", 
+             "rideable_type", 
+             "started_at", 
+             "ended_at", 
+             "start_station_name", 
+             "start_station_id", 
+             "end_station_name", 
+             "end_station_id",
+             "start_lat",
+             "start_lng",
+             "end_lat",
+             "end_lng",
+             "member_casual")
+for (x in newlist) {
+  print(x)
+  newmiss <- sum(is.na(original_df[x]) / nrow(original_df) * 100)
+  print(paste0(round(newmiss, 2), " %"))
+}
+
+```
+
+There was only a serious amount of missing data on the start station and
+end station variables.
+
+For start stations, we found all missing data in rides with the electric
+bikes.
+
+For end stations, we found some missing data in rides with classic and
+docked bikes, but the large majority remained in rides with electric
+bikes.
+
+This means that: 1) many rides on electric bikes were simply not started
+and/or ended at a normal docking station; 2) a very small number of
+those who rode with a classic (or docked) bike ended their ride with
+their bike left somewhere invalid (e.g., the side of the road or in a
+lake).
+
+<br>
+
+##### 3. OUTLIERS
+
+<br>
+
+**3.1 IMPOSSIBLE GEOGRAPHICAL COORDINATES**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+newoutlier1 <- sf::st_as_sf(
+  newoutlier1, 
+  coords = c("start_lng", "start_lat"),
+  crs = 4326 # lat/long coordinate reference system
+)
+
+mapview(
+  newoutlier1[,16]
+)
+
+```
+
+<br>
+
+**3.2 IMPOSSIBLE TIME DURATION**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+print("Rows with a duration between 1 and 59 seconds")
+nrow(newoutlier2)
+print("Percentage with a duration between 1 and 59 seconds")
+print(paste0(round(nrow(newoutlier2)/5733451*100, 4), " %"))
+
+print("Rows with a duration of zero or negative seconds, or over three hours")
+nrow(newoutlier3)
+print("Percentage with a duration of zero or negative seconds, or over three hours")
+print(paste0(round(nrow(newoutlier3)/5733451*100, 4), " %"))
+
+```
+
+<br>
+
+**3.3 START STATION BUT NO END STATION AMONG CLASSIC/DOCK BIKE RIDES**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+print("Rides with a start station but no end station")
+nrow(newoutlier4)
+print("Percentage with a start station but no end station")
+print(paste0(round(nrow(newoutlier4)/(5733451*0.508)*100, 4), " %"))
+
+```
+
+<br>
+
+##### 4. EXTRA ANALYSES
+
+<br>
+
+**4.1 Rides by casual riders between 30 and 45 minutes**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+data3045 <- subset(newdata_df, ride_length >= 1800 & ride_length < 2700 & member_casual == "casual", select = c("ride_length"))
+datacasual <- nrow(subset(newdata_df, member_casual == "casual"))
+print("Rides by casual riders >= 30 and < 45 minutes")
+nrow(data3045)
+print("Percentage by casual riders >= 30 and < 45 minutes")
+print(paste0(round(nrow(data3045) / datacasual*100, 4), " %"))
+
+```
+
+<br> <br> <br>
+
+------------------------------------------------------------------------

@@ -20,8 +20,6 @@ editor_options:
 
 <br>
 
-### 1. GOAL
-
 The [Google Data Analytics Professional
 Certificate](https://www.coursera.org/professional-certificates/google-data-analytics?utm_source=gg&utm_medium=sem&utm_campaign=15-GoogleCareerCert-HubPage-ROW&utm_content=B2C&campaignid=12525380573&adgroupid=123096382230&device=c&keyword=google%20ads%20certification%20course&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=505430311641&hide_mobile_promo&gclid=Cj0KCQiA-oqdBhDfARIsAO0TrGEBNjgbJf-fPfRDLgRR64oVqxHErOw17pTFvLlQfymtuBR7j4Yd7qMaAkeTEALw_wcB)
 requires completing a Capstone Project.
@@ -45,28 +43,6 @@ analysts, and the projects of other Google Certificate enrolees.
 
 This document then presents in the **2. Appendix** section the data
 cleaning steps, with notes on missing data and outliers (Process).
-
-<br>
-
-### 2. PERSONAL NOTE
-
-This capstone project was by far the most fun I had with the
-Certificate. I have worked with Stata for seven years now and its
-convenience has made it hard to move on to anything else, even if R is
-much more powerful in the long run.
-
-I am excited to continue learning SQL and start Python in the next year.
-I hope that I can return to this document in a few years and appreciate
-how much I have grown. In the meantime, please don't judge my code too
-harshly!
-
-**P.S.** It was hard fighting project creep. I initially wanted to match
-station coordinates with U.S. counties to explore the role of e.g., area
-poverty, but I quickly realised that this would require *days* of
-cleaning data and learning more about Chicago. In the end, I decided to
-focus on the variables highlighted in the Case Study instructions, and
-strengthen the recommendations with the other sources that have looked
-at the dataset.
 
 <br>
 
